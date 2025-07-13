@@ -22,7 +22,6 @@ export default async function handler(req, res) {
     const data = JSON.parse(dataStr);
 
     // TODO: cập nhật DB nếu cần
-    console.log("✅ Zalo callback OK for:", data.app_trans_id);
 
     return res.json({
       return_code: 1,

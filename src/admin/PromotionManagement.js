@@ -108,34 +108,6 @@ const PromotionManagement = () => {
     setEditingPromotionDetail(null);
     setIsPromotionDetailModalVisible(true);
   };
-
-  // const handleDeletePromotionDetail = async (id, status) => {
-  //   const promotion = promotions.find((promo) => promo.id === id);
-
-  //   if (promotion?.attributes?.status === "Hoạt động") {
-  //     message.warning(
-  //       "Không thể xóa chi tiết khuyến mãi khi khuyến mãi đang hoạt động."
-  //     );
-  //     return;
-  //   }
-  //   confirm({
-  //     title: "Bạn có chắc chắn muốn xóa chi tiết khuyến mãi này?",
-  //     icon: <ExclamationCircleOutlined />,
-  //     content: "Hành động này không thể hoàn tác.",
-  //     okText: "Xóa",
-  //     okType: "danger",
-  //     cancelText: "Hủy",
-  //     onOk: async () => {
-  //       try {
-  //         await deletePromotionDetail(id);
-  //         message.success("Xóa chi tiết khuyến mãi thành công");
-  //         loadPromotions();
-  //       } catch (error) {
-  //         message.error("Có lỗi xảy ra khi xóa chi tiết khuyến mãi");
-  //       }
-  //     },
-  //   });
-  // };
   const handleDeletePromotionDetail = async (detailId, promotionId) => {
     const promotion = promotions.find((promo) => promo.id === promotionId);
 

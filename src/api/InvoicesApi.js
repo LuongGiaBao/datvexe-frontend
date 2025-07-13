@@ -24,7 +24,6 @@ export const createInvoice = async (invoiceData) => {
       },
     });
 
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error creating invoice:", error);

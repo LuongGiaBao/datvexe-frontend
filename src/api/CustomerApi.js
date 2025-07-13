@@ -183,7 +183,6 @@ export const registerCustomer = async (username, email, password) => {
       password: password,
       type: "customer",
     });
-    console.log("response.data", response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -195,49 +194,12 @@ export const checkUsernameExists = async (username) => {
     const response = await apiClient.get(
       `users?filters[username][$eq]=${username}`
     ); // Thay đổi endpoint nếu cần
-    console.log("Resspon", response.data);
 
     return response.data.length > 0; // Giả sử API trả về danh sách khách hàng
   } catch (error) {
     throw error;
   }
 };
-
-// Đăng ký khách hàng
-// export const registerCustomer = async (customerData) => {
-//   try {
-//     // Đăng ký user
-//     const userResponse = await apiClient.post("/auth/local/register", {
-//       username: customerData.TenKH,
-//       email: customerData.Email,
-//       password: customerData.Password,
-//       role: 3,
-//     });
-//     console.log(userResponse);
-
-//     // Tạo thông tin khách hàng
-//     const customerResponse = await apiClient.post("/customers", {
-//       data: {
-//         MaKH: `MKH${Math.floor(Math.random() * 1000)}`,
-//         TenKH: customerData.TenKH,
-//         Email: customerData.Email,
-//         DienThoai: customerData.DienThoai,
-//         DiaChi: customerData.DiaChi,
-//         GioiTinh: customerData.GioiTinh || "Nam",
-//         user: userResponse.data.id, // Liên kết với user
-//       },
-//     });
-//     console.log(customerResponse);
-
-//     return {
-//       user: userResponse.data.user,
-//       customer: customerResponse.data.data,
-//     };
-//   } catch (error) {
-//     console.error("Registration error:", error);
-//     throw error;
-//   }
-// };
 
 // Tìm kiếm khách hàng theo email
 export const findCustomerByEmail = async (email) => {

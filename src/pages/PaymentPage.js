@@ -132,9 +132,13 @@ const PaymentPage = () => {
   //     setLoading(false);
   //   }
   // };
+  const STRAPI_API_BASE_URL =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:1337/api"
+      : "https://datvexe-backend-lth0.onrender.com/api";
+
   const handlePayment = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
-  
     if (!user) {
       localStorage.setItem(
         "pendingBookingDetails",
@@ -144,21 +148,24 @@ const PaymentPage = () => {
       navigate("/login");
       return;
     }
-  
+
+    let appTransID = null;
+    let checkPaymentStatus = null;
+
     try {
       setLoading(true);
-      // Tính toán số tiền cuối cùng sau khi áp dụng khuyến mãi
+
       const finalAmount = bookingDetails.promotion
         ? bookingDetails.totalAmount - bookingDetails.promotion.discountAmount
         : bookingDetails.totalAmount;
-  
-      const response = await axios.post("http://localhost:5000/payment", {
+
+      const response = await axios.post(`${STRAPI_API_BASE_URL}/payment`, {
         amount: finalAmount,
         userId: bookingDetails.customerInfo.email,
         description: `Thanh toán vé xe từ ${bookingDetails.tripInfo.departureStation} đến ${bookingDetails.tripInfo.destinationStation}`,
         bookingDetails: {
           ...bookingDetails,
-          finalAmount: finalAmount,
+          finalAmount,
           promotionDetails: bookingDetails.promotion
             ? {
                 promotionId: bookingDetails.promotion.promotionId,
@@ -169,64 +176,67 @@ const PaymentPage = () => {
             : null,
         },
       });
-  
-      if (
-        response.data &&
-        response.data.order_url &&
-        response.data.appTransID
-      ) {
-        localStorage.setItem("currentAppTransID", response.data.appTransID);
+
+      const { order_url, appTransID: transIDFromResponse } = response.data;
+      appTransID = transIDFromResponse;
+      if (!appTransID) {
+        throw new Error("Thiếu mã giao dịch từ server!");
+      }
+      if (order_url && appTransID) {
+        localStorage.setItem("currentAppTransID", appTransID);
         localStorage.setItem("paymentInitiated", "true");
-  
+
         const updatedBookingDetails = {
           ...bookingDetails,
           paymentStatus: "pending",
-          appTransID: response.data.appTransID,
-          finalAmount: finalAmount,
+          appTransID,
+          finalAmount,
         };
         localStorage.setItem(
           "bookingDetails",
           JSON.stringify(updatedBookingDetails)
         );
-  
-        const paymentWindow = window.open(response.data.order_url, "_blank");
-  
-        const checkPaymentStatus = setInterval(async () => {
+
+        window.open(order_url, "_blank");
+
+        // Bắt đầu kiểm tra trạng thái thanh toán
+        checkPaymentStatus = setInterval(async () => {
           try {
             const statusResponse = await axios.get(
-              `http://localhost:5000/payment/status/${response.data.appTransID}`
+              `${STRAPI_API_BASE_URL}/payment/status/${appTransID}`
             );
-            if (statusResponse.data.status === "completed") {
+
+            const status = statusResponse.data.status;
+            if (status === "completed") {
               clearInterval(checkPaymentStatus);
               message.success("Thanh toán thành công!");
-  
-              // Gọi API để lưu thông tin hóa đơn
-             // await saveInvoice(updatedBookingDetails, user);
-  
               navigate("/booking-success", {
                 state: { bookingDetails: statusResponse.data.bookingDetails },
               });
-            } else if (statusResponse.data.status === "failed") {
+            } else if (status === "failed") {
               clearInterval(checkPaymentStatus);
               message.error("Thanh toán thất bại. Vui lòng thử lại.");
             }
           } catch (error) {
-            console.error("Error checking payment status:", error);
+            console.error("Lỗi khi kiểm tra trạng thái thanh toán:", error);
           }
         }, 5000);
-  
-        return () => clearInterval(checkPaymentStatus);
       } else {
-        throw new Error("Invalid payment response");
+        throw new Error("Phản hồi từ server không hợp lệ.");
       }
     } catch (error) {
-      console.error("Payment error:", error);
+      console.error("Lỗi thanh toán:", error);
       message.error("Có lỗi xảy ra khi tạo yêu cầu thanh toán");
     } finally {
       setLoading(false);
     }
+
+    // Dọn dẹp interval nếu component unmount (nếu bạn dùng useEffect bên ngoài thì nên clearInterval tại đó)
+    return () => {
+      if (checkPaymentStatus) clearInterval(checkPaymentStatus);
+    };
   };
-  
+
   // const saveInvoice = async (bookingDetails, user) => {
   //   try {
   //     const invoiceData = {
@@ -243,9 +253,9 @@ const PaymentPage = () => {
   //         totalPrice: bookingDetails.finalAmount / bookingDetails.selectedSeats.length,
   //       })),
   //     };
-  
+
   //     const response = await axios.post("http://localhost:5000/invoices", invoiceData);
-  
+
   //     if (response.status === 201) {
   //       message.success("Hóa đơn đã được lưu thành công.");
   //     } else {
@@ -256,7 +266,7 @@ const PaymentPage = () => {
   //     message.error("Có lỗi xảy ra khi lưu hóa đơn.");
   //   }
   // };
-  
+
   if (!bookingDetails) {
     return (
       <div className="payment-page">

@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       paymentStatusMap.set(appTransID, "pending");
 
       const embed_data = {
-        redirecturl: `https://https://datvexe-frontend.vercel.app/booking-success`,
+        redirecturl: `https://datvexe-frontend.vercel.app/booking-success`,
         appTransID,
       };
 

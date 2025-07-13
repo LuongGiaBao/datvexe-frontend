@@ -23,7 +23,6 @@ const CustomerManagement = () => {
   useEffect(() => {
     const getCustomers = async () => {
       const fetchedCustomers = await fetchAllCustomers();
-      console.log("Fetched Customers:", fetchedCustomers); // Kiểm tra dữ liệu ở đây
       setCustomers(fetchedCustomers);
     };
     getCustomers();
@@ -89,51 +88,12 @@ const CustomerManagement = () => {
     setEditingCustomerId(null);
   };
 
-  // const columns = [
-  //   { title: "ID", dataIndex: "id", key: "id" },
-  //   { title: "Mã KH", dataIndex: "MaKH", key: "MaKH" },
-  //   { title: "Tên Khách Hàng", dataIndex: "TenKH", key: "TenKH" },
-  //   {
-  //     title: "Loại Người Dùng",
-  //     dataIndex: "type",
-  //     key: "type",
-  //     render: (text) => text || "Khách hàng",
-  //     filters: [{ text: "Khách hàng", value: "Khách hàng" }],
-  //   },
-  //   {
-  //     title: "Trạng Thái",
-  //     dataIndex: "confirmed",
-  //     key: "confirmed",
-  //     render: (confirmed) => (confirmed ? "Đã xác thực" : "Chưa xác thực"),
-  //   },
-  //   {
-  //     title: "Số Điện Thoại",
-  //     dataIndex: "DienThoai",
-  //     key: "DienThoai",
-  //   },
-  //   {
-  //     title: "Hành Động",
-  //     key: "action",
-  //     render: (_, record) => (
-  //       <>
-  //         <Button type="primary" onClick={() => handleEditCustomer(record)}>
-  //           Sửa
-  //         </Button>
-  //         <Button type="danger" onClick={() => handleDeleteCustomer(record.id)}>
-  //           Xóa
-  //         </Button>
-  //       </>
-  //     ),
-  //   },
-  // ];
-
   const columns = [
     { title: "ID", dataIndex: "id", key: "id" },
     { title: "Mã KH", dataIndex: "MaKH", key: "MaKH" },
     { title: "Tên Khách Hàng", dataIndex: "TenKH", key: "TenKH" },
     { title: "Email", dataIndex: "Email", key: "Email" },
-    // { title: "Địa Chỉ", dataIndex: "DiaChi", key: "DiaChi" },
-    // { title: "Giới Tính", dataIndex: "GioiTinh", key: "GioiTinh" },
+    
     {
       title: "Số Điện Thoại",
       dataIndex: "DienThoai",
@@ -145,13 +105,6 @@ const CustomerManagement = () => {
       key: "type",
       render: (text) => text || "Khách hàng1",
     },
-    // {
-    //   title: "Trạng Thái",
-    //   dataIndex: "confirmed",
-    //   key: "confirmed",
-    //   render: (confirmed) => (confirmed ? "Đã xác thực" : "Chưa xác thực"),
-    // },
-
     {
       title: "Hành Động",
       key: "action",

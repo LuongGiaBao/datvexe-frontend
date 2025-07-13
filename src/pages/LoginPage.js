@@ -296,7 +296,6 @@ const AuthPage = () => {
     try {
       // Kiểm tra xem tên người dùng đã tồn tại chưa
       const usernameExists = await checkUsernameExists(formData.TenKH);
-      console.log("Username exists:", usernameExists);
       if (usernameExists) {
         message.error("Tên người dùng đã tồn tại. Vui lòng chọn tên khác.");
         setLoading(false);

@@ -3,7 +3,6 @@ import { apiClient } from "../services/apiservices";
 export const fetchAllEmployeeReport = async () => {
   try {
     const response = await apiClient.get("/employee-sales?populate=*");
-    console.log(response.data);
 
     return response.data; // Trả về dữ liệu nhận được từ API
   } catch (error) {

@@ -12,42 +12,7 @@ const PromotionReports = () => {
   const [loading, setLoading] = useState(true);
   const [filteredData, setFilteredData] = useState([]);
   const [dateRange, setDateRange] = useState([null, null]);
-  // Fetch data từ API
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetchAllPromotionReport();
-  //       console.log("response", response);
 
-  //       const flattenedData = response.data.map((item) => {
-  //         return (
-  //           item.attributes.detail_promotions?.data.map((detail) => ({
-  //             //id: detail.id,
-  //             MaChiTietKhuyenMai: detail.attributes.MaChiTietKhuyenMai,
-  //             description: detail.attributes.description,
-  //             startDate:
-  //               detail.attributes.promotion?.data?.attributes?.startDate || "-",
-  //             endDate:
-  //               detail.attributes.promotion?.data?.attributes?.endDate || "-",
-  //             LoaiKhuyenMai: detail.attributes.LoaiKhuyenMai,
-  //             TongTienHoaDon: detail.attributes.TongTienHoaDon,
-  //             SoTienTang: detail.attributes.SoTienTang,
-  //             PhanTramChietKhau: detail.attributes.PhanTramChietKhau,
-  //             SoTienKhuyenMaiToiDa: detail.attributes.SoTienKhuyenMaiToiDa,
-  //           })) || []
-  //         );
-  //       });
-  //       setData(flattenedData); // Gán dữ liệu đã phẳng hóa
-  //       setFilteredData(flattenedData);
-  //     } catch (error) {
-  //       console.error("Error fetching data: ", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,7 +37,6 @@ const PromotionReports = () => {
           SoTienKhuyenMaiToiDa: detail.attributes.SoTienKhuyenMaiToiDa,
         }));
         setData(flattenedData);
-        console.log("flattenedData", flattenedData);
 
         setFilteredData(flattenedData);
       } catch (error) {
@@ -193,8 +157,6 @@ const PromotionReports = () => {
           );
         });
       });
-
-      console.log("Filtered Data:", filtered);
       setFilteredData(filtered);
     } else {
       setFilteredData(data);

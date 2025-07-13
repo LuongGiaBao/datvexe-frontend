@@ -43,7 +43,7 @@ const PromotionDetailFormModal = ({
         setPromotionType(null);
       })
       .catch((info) => {
-        console.log("Validate Failed:", info);
+      
       });
   };
 

@@ -42,18 +42,10 @@ const PromotionFormModal = ({
           values.status = "Ngưng hoạt động";
         }
 
-        // // Bỏ kiểm tra ngày
-        // if (values.status === "Hoạt động") {
-        //   message.error(
-        //     "Không thể kích hoạt khuyến mãi này do trùng thời gian với khuyến mãi khác đang hoạt động."
-        //   );
-        //   return;
-        // }
-
         onOk(values);
       })
       .catch((info) => {
-        console.log("Validate Failed:", info);
+      
       });
   };
 
@@ -72,34 +64,6 @@ const PromotionFormModal = ({
     // Cập nhật giá trị trong form
     form.setFieldsValue({ IDPromotion: value });
   };
-
-  // const handleDateChange = () => {
-  //   const startDate = form.getFieldValue("startDate");
-  //   const endDate = form.getFieldValue("endDate");
-
-  //   if (startDate && endDate) {
-  //     const isOverlapping = !existingPromotions.some(
-  //       (promo) =>
-  //         promo.attributes.status === "Hoạt động" &&
-  //         moment(promo.attributes.startDate).isSameOrBefore(endDate) &&
-  //         moment(promo.attributes.endDate).isSameOrAfter(startDate) &&
-  //         (!initialValues || promo.id !== initialValues.id)
-  //     );
-
-  //     setCanActivate(!isOverlapping);
-
-  //     if (isOverlapping) {
-  //       form.setFieldsValue({ status: "Ngưng hoạt động" });
-  //       message.warning(
-  //         "Không thể kích hoạt khuyến mãi này vì đã có khuyến mãi hoạt động trong khoảng thời gian này."
-  //       );
-  //     } else {
-  //       // Nếu không có trùng lặp, có thể đặt trạng thái thành "Hoạt động"
-  //       form.setFieldsValue({ status: "Hoạt động" });
-  //     }
-  //   }
-  // };
-
   return (
     <Modal
       title={initialValues ? "Cập nhật Khuyến Mãi" : "Thêm Khuyến Mãi Mới"}

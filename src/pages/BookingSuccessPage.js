@@ -28,142 +28,69 @@ const BookingSuccessPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Config API base URL
+  const STRAPI_API_BASE_URL =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:1337/api"
+      : "https://datvexe-backend-lth0.onrender.com/api";
+
   useEffect(() => {
+    let paymentCheckInterval;
+
     const checkPaymentStatus = async () => {
       try {
-        const appTransID = localStorage.getItem("currentAppTransID");
-        if (!appTransID) {
-          throw new Error("Không tìm thấy mã giao dịch");
-        }
+        const appTransID =
+          location.state?.bookingDetails?.appTransID ||
+          localStorage.getItem("currentAppTransID");
 
-        // Kiểm tra trạng thái thanh toán
+        if (!appTransID) throw new Error("Không tìm thấy mã giao dịch");
+
         const response = await axios.get(
-          `http://localhost:5000/payment/status/${appTransID}`
+          `${STRAPI_API_BASE_URL}/payment/status/${appTransID}`
         );
 
-        console.log("Payment status response:", response.data);
+        const { status, bookingDetails: bookingData } = response.data;
 
-        if (response.data.status === "completed") {
-          // Thanh toán thành công
-          handleSuccessfulBooking({
-            ...response.data.bookingDetails,
+        if (status === "completed") {
+          clearInterval(paymentCheckInterval);
+          await handleSuccessfulBooking({
+            ...bookingData,
             paymentStatus: "completed",
           });
+          if (!bookingData.customerInfo?.id) {
+            throw new Error("Thiếu thông tin khách hàng (customer ID)");
+          }
           message.success("Thanh toán thành công!");
-        } else if (response.data.status === "failed") {
-          // Thanh toán thất bại
+        } else if (status === "failed") {
+          clearInterval(paymentCheckInterval);
           message.error("Thanh toán thất bại");
-          navigate("/payment"); // Chuyển về trang thanh toán
-        } else if (response.data.status === "pending") {
-          // Thanh toán đang chờ xử lý
-          setBookingDetails({
-            ...response.data.bookingDetails,
-            paymentStatus: "pending",
-          });
-          // Tiếp tục kiểm tra sau 5 giây
-          setTimeout(checkPaymentStatus, 5000);
+          navigate("/payment");
+        } else if (status === "pending") {
+          setBookingDetails({ ...bookingData, paymentStatus: "pending" });
         }
       } catch (error) {
-        console.error("Error checking payment status:", error);
-        message.error("Không thể kiểm tra trạng thái thanh toán");
+        console.error("Lỗi kiểm tra trạng thái thanh toán:", error);
+        message.error(
+          error.message || "Không thể kiểm tra trạng thái thanh toán"
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    // Kiểm tra nếu có dữ liệu từ location state
     if (location.state?.bookingDetails) {
       handleSuccessfulBooking(location.state.bookingDetails);
       setLoading(false);
     } else {
-      checkPaymentStatus();
+      paymentCheckInterval = setInterval(checkPaymentStatus, 5000);
     }
+
+    return () => {
+      if (paymentCheckInterval) clearInterval(paymentCheckInterval);
+    };
   }, [location.state, navigate]);
 
-  // const handleSuccessfulBooking = (bookingData) => {
-  //   try {
-  //     // Tạo ticket mới với thông tin khuyến mãi
-  //     const newTicket = {
-  //       id: generateTicketId(),
-  //       tripInfo: bookingData.tripInfo,
-  //       seatNumbers: bookingData.selectedSeats,
-  //       totalAmount: bookingData.totalAmount,
-  //       finalAmount: bookingData.finalAmount, // Thêm số tiền cuối cùng
-  //       promotion: bookingData.promotion, // Thêm thông tin khuyến mãi
-  //       status: "Đã thanh toán",
-  //       customerInfo: bookingData.customerInfo,
-  //       bookingDate: new Date().toISOString(),
-  //       paymentStatus: "completed",
-  //     };
-
-  //     // Lưu vào localStorage
-  //     const savedTickets = JSON.parse(localStorage.getItem("tickets") || "[]");
-  //     const updatedTickets = [...savedTickets, newTicket];
-  //     localStorage.setItem("tickets", JSON.stringify(updatedTickets));
-
-  //     setBookingDetails(bookingData);
-
-  //     // Xóa dữ liệu tạm
-  //     localStorage.removeItem("currentAppTransID");
-  //     localStorage.removeItem("pendingBookingDetails");
-  //     localStorage.removeItem("paymentInitiated");
-
-  //     message.success("Đặt vé thành công!");
-  //   } catch (error) {
-  //     console.error("Error handling successful booking:", error);
-  //     message.error("Có lỗi xảy ra khi lưu thông tin vé");
-  //   }
-  // };
-  // const handleSuccessfulBooking = async (bookingData) => {
-  //   try {
-  //     // Generate unique ticket ID
-  //     const newTicket = {
-  //       id: generateTicketId(),
-  //       tripInfo: bookingData.tripInfo,
-  //       seatNumbers: bookingData.selectedSeats,
-  //       totalAmount: bookingData.totalAmount,
-  //       finalAmount: bookingData.finalAmount,
-  //       promotion: bookingData.promotion,
-  //       status: "Đã thanh toán",
-  //       customerInfo: bookingData.customerInfo,
-  //       bookingDate: new Date().toISOString(),
-  //       paymentStatus: "completed",
-  //     };
-
-  //     // Save ticket locally
-  //     const savedTickets = JSON.parse(localStorage.getItem("tickets") || "[]");
-  //     const updatedTickets = [...savedTickets, newTicket];
-  //     localStorage.setItem("tickets", JSON.stringify(updatedTickets));
-
-  //     // Prepare invoice data
-  //     const invoiceData = {
-  //       MaHoaDon: generateTicketId(), // Use the ticket ID as invoice ID or generate separately
-  //       PhuongThucThanhToan: "Online", // Replace with the appropriate payment method
-  //       status: "Đã thanh toán",
-  //       customerId: bookingData.customerInfo.id, // Assuming you have customer ID
-  //       employeeId: bookingData.employeeId || null, // Optional: Add employee if applicable
-  //       scheduleId: bookingData.tripInfo.scheduleId, // Assuming schedule ID is part of trip info
-  //     };
-
-  //     // Save invoice to the API
-  //     const createdInvoice = await createInvoice(invoiceData);
-
-  //     console.log("Invoice created successfully:", createdInvoice);
-
-  //     // Save the booking details to the state
-  //     setBookingDetails(bookingData);
-
-  //     // Clear temporary storage
-  //     localStorage.removeItem("currentAppTransID");
-  //     localStorage.removeItem("pendingBookingDetails");
-  //     localStorage.removeItem("paymentInitiated");
-
-  //     message.success("Đặt vé và lưu hóa đơn thành công!");
-  //   } catch (error) {
-  //     console.error("Error handling successful booking:", error);
-  //     message.error("Có lỗi xảy ra khi lưu thông tin vé hoặc hóa đơn");
-  //   }
-  // };
+ 
   const handleSuccessfulBooking = async (bookingData) => {
     try {
       // Chuẩn bị dữ liệu hóa đơn
@@ -178,9 +105,6 @@ const BookingSuccessPage = () => {
 
       // Gọi API để lưu hóa đơn
       const createdInvoice = await createInvoice(invoiceData);
-
-      console.log("Invoice created successfully:", createdInvoice);
-
       // Lưu thông tin vé vào localStorage
       const newTicket = {
         id: generateTicketId(),
