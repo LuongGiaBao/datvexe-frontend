@@ -83,24 +83,18 @@ export const deleteAdminUser = async (userId) => {
   }
 };
 // AdminUserApi.js
-export const loginAdminUser = async (email, password) => {
-  try {
-    const response = await apiClient.post("/auth/local", {
-      identifier: email,
-      password: password,
-      type: "Nhân viên", // Xác định loại người dùng
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+export const loginAdminUser = async (identifier, password) => {
+  const response = await axios.post(
+    `${process.env.REACT_APP_API_URL}/auth/local`,
+    { identifier, password }
+  );
+  return response.data;
 };
-
 export const registerAdminUser = async (userData) => {
   try {
     const response = await apiClient.post("/auth/local/register", {
       ...userData,
-      type: "Nhân viên",
+      role: "adminstaff",
     });
     return response.data;
   } catch (error) {

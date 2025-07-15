@@ -166,7 +166,7 @@ export const loginCustomer = async (email, password) => {
     const response = await apiClient.post("/auth/local", {
       identifier: email,
       password: password,
-      type: "customer", // Xác định loại người dùng
+      // type: "customer",
     });
     return response.data;
   } catch (error) {
@@ -175,18 +175,33 @@ export const loginCustomer = async (email, password) => {
 };
 
 // Đăng ký khách hàng
-export const registerCustomer = async (username, email, password) => {
+export const registerCustomer = async (
+  username,
+  email,
+  password,
+  role = "customer"
+) => {
   try {
     const response = await apiClient.post("/auth/local/register", {
       username: username,
       email: email,
       password: password,
-      type: "customer",
+      role,
+      // type: "customer",
     });
     return response.data;
   } catch (error) {
     throw error;
   }
+};
+
+export const getCurrentUser = async (jwt) => {
+  const response = await apiClient.get(`/users/me`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+  return response.data;
 };
 
 export const checkUsernameExists = async (username) => {

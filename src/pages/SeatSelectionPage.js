@@ -11,7 +11,7 @@ import {
   List,
   Tag,
 } from "antd";
-import { createUser, updateUser, getLoggedInUser } from "../api/UserApi";
+import {getLoggedInUser } from "../api/UserApi";
 import { fetchAllPromotions } from "../api/PromotionApi";
 import { createCustomer, updateCustomer } from "../api/CustomerApi";
 
@@ -650,14 +650,7 @@ const SeatSelectionPage = () => {
                     đ
                   </Text>
                 </div>
-              )}
-              {/* <Button
-                type="primary"
-                onClick={() => setIsModalVisible(true)}
-                style={{ marginBottom: 20 }}
-              >
-                Chọn khuyến mẫi
-              </Button> */}
+              )}      
             </Card>
 
             <Button

@@ -4,7 +4,6 @@ import GuestHomePage from "../pages/GuestHomePage";
 import LoginPage from "../pages/LoginPage";
 import OTPPage from "../pages/OTPPage";
 import SearchResults from "../pages/SearchResults";
-import SearchResultsPage from "../pages/SearchResultsPage";
 import SeatSelectionPage from "../pages/SeatSelectionPage";
 import BookingSuccessPage from "../pages/BookingSuccessPage";
 import SchedulePage from "../pages/SchedulePage";
@@ -22,10 +21,7 @@ const UserRoutes = () => {
         path="/search-results/:departureLocation/:arrivalLocation"
         element={<SearchResults />}
       />
-      <Route
-        path="/search-results-page/:departureLocation/:arrivalLocation"
-        element={<SearchResultsPage />}
-      />
+
       <Route path="/seat-selection" element={<SeatSelectionPage />} />
       <Route path="/booking-success" element={<BookingSuccessPage />} />
       <Route path="/schedule" element={<SchedulePage />} />

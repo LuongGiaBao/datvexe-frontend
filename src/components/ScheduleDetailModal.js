@@ -12,8 +12,7 @@ const ScheduleDetailModal = ({ visible, onCancel, schedule }) => {
       ngaydi,
       MaTuyen,
       BienSo,
-      MaDiemDon,
-      MaDiemTra,
+     
     } = {},
   } = schedule;
 

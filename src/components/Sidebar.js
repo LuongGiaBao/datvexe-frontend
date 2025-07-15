@@ -9,10 +9,16 @@ const Sidebar = ({}) => {
   const location = useLocation();
   const sidebarRef = useRef(null);
   const [isReportsMenuOpen, setIsReportsMenuOpen] = useState(false);
+  // const onLogout = () => {
+  //   localStorage.removeItem("token");
+  //   localStorage.removeItem("adminName"); // Xóa tên admin khi đăng xuất
+  //   navigate("/admin/login");
+  // };
+
   const onLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("adminName"); // Xóa tên admin khi đăng xuất
+    localStorage.clear(); // Xóa toàn bộ nếu bạn chỉ lưu token và tên
     navigate("/admin/login");
+    window.location.reload(); // đảm bảo app reset state sạch
   };
   const toggleReportsMenu = () => {
     setIsReportsMenuOpen(!isReportsMenuOpen);

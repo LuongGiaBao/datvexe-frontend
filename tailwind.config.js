@@ -7,7 +7,11 @@ module.exports = {
     "./src/assets/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      container: {
+        center: true,
+      },
+    },
   },
   plugins: [require("@tailwindcss/typography")],
 };

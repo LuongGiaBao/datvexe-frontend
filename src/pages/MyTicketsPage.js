@@ -12,7 +12,6 @@ import {
 } from "antd";
 import {
   ArrowLeftOutlined,
-  QrcodeOutlined,
   ClockCircleOutlined,
   UserOutlined,
   EnvironmentOutlined,
@@ -41,8 +40,7 @@ const MyTicketsPage = () => {
       setTickets(savedTickets);
     };
 
-    if (bookingDetails) {
-      // Kiểm tra xem vé đã tồn tại chưa
+    if (bookingDetails && bookingDetails.paymentStatus === "success") {
       const savedTickets = JSON.parse(localStorage.getItem("tickets") || "[]");
       const isDuplicate = savedTickets.some(
         (ticket) =>
@@ -68,9 +66,8 @@ const MyTicketsPage = () => {
           },
           seatNumbers: bookingDetails.selectedSeats,
           totalAmount: bookingDetails.totalAmount,
-          finalAmount: bookingDetails.finalAmount, // Thêm thành tiền cuối cùng
+          finalAmount: bookingDetails.finalAmount,
           promotion: bookingDetails.promotion,
-          // status: bookingDetails.paymentStatus,
           customerInfo: bookingDetails.customerInfo,
           bookingDate: new Date().toISOString(),
         };
@@ -79,10 +76,10 @@ const MyTicketsPage = () => {
         localStorage.setItem("tickets", JSON.stringify(updatedTickets));
         setTickets(updatedTickets);
       } else {
-        loadTickets(); // Load existing tickets if duplicate found
+        loadTickets();
       }
     } else {
-      loadTickets(); // Load tickets if no new booking details are present
+      loadTickets(); // Không có booking hoặc chưa thanh toán
     }
   }, [location.state]);
 
@@ -154,14 +151,6 @@ const MyTicketsPage = () => {
                       <span className="text-xl font-bold text-blue-600">
                         {ticket.id}
                       </span>
-                      {/* <Button
-                        type="primary"
-                        icon={<QrcodeOutlined />}
-                        onClick={() => showQRCode(ticket.id)}
-                        className="bg-blue-500 hover:bg-blue-600"
-                      >
-                        Hiển thị QR
-                      </Button> */}
                     </div>
                   }
                 >
@@ -296,115 +285,6 @@ const MyTicketsPage = () => {
         </Modal>
       </div>
     </div>
-
-    // <div className="my-tickets-page">
-    //   <div className="page-header">
-    //     <Button
-    //       type="primary"
-    //       icon={<ArrowLeftOutlined />}
-    //       onClick={handleGoBack}
-    //     >
-    //       Quay lại
-    //     </Button>
-    //   </div>
-
-    //   {tickets.length === 0 ? (
-    //     <Empty description="Bạn chưa có vé nào" />
-    //   ) : (
-    //     <List
-    //       grid={{ gutter: 16, column: 1 }}
-    //       dataSource={tickets}
-    //       renderItem={(ticket) => (
-    //         <List.Item>
-    //           <Card
-    //             title={`Vé ${ticket.id}`}
-    //             extra={
-    //               <Button
-    //                 icon={<QrcodeOutlined />}
-    //                 onClick={() => showQRCode(ticket.id)}
-    //               >
-    //                 Hiển thị QR
-    //               </Button>
-    //             }
-    //             className="ticket-card"
-    //           >
-    //             <div className="ticket-info">
-    //               <div className="trip-details">
-    //                 <Text strong>Chuyến xe: </Text>
-    //                 <Text>
-    //                   {ticket.tripInfo.departureStation} -{" "}
-    //                   {ticket.tripInfo.destinationStation}
-    //                 </Text>
-    //               </div>
-    //               <div className="customer-details">
-    //                 <Text strong>Thông tin khách hàng: </Text>
-    //                 <Text>
-    //                   {ticket.customerInfo.name} - {ticket.customerInfo.phone}
-    //                 </Text>
-    //               </div>
-    //               <div className="time-details">
-    //                 <Text strong>Khởi hành: </Text>
-    //                 <Text>{formatDate(ticket.tripInfo.departureTime)}</Text>
-    //               </div>
-    //               <div className="booking-date">
-    //                 <Text strong>Ngày đặt vé: </Text>
-    //                 <Text>{formatDate(ticket.bookingDate)}</Text>
-    //               </div>
-    //               <div className="seat-details">
-    //                 <Text strong>Số ghế: </Text>
-    //                 <Text>{ticket.seatNumbers.join(", ")}</Text>
-    //               </div>
-    //               <div className="amount-details">
-    //                 <Text strong>Tổng tiền: </Text>
-    //                 <Text>{ticket.totalAmount.toLocaleString()} VNĐ</Text>
-    //               </div>
-    //               {ticket.promotion && (
-    //                 <div className="promotion-details">
-    //                   <Text strong>Khuyến mãi: </Text>
-    //                   <Text>{ticket.promotion.promotionCode}</Text>
-    //                   <br />
-    //                   <Text strong>Giảm giá: </Text>
-    //                   <Text>
-    //                     {ticket.promotion.discountAmount
-    //                       ? ticket.promotion.discountAmount.toLocaleString()
-    //                       : "Không có"}{" "}
-    //                     VNĐ
-    //                   </Text>
-    //                 </div>
-    //               )}
-
-    //               <div className="final-amount-details">
-    //                 <Text strong>Thành tiền: </Text>
-    //                 <Text type="danger">
-    //                   {ticket.finalAmount
-    //                     ? ticket.finalAmount.toLocaleString()
-    //                     : "Không có"}{" "}
-    //                   VNĐ
-    //                 </Text>
-    //               </div>
-    //               {/* <div className="status-details">
-    //                 <Text strong>Trạng thái: </Text>
-    //                 <Tag color="green">{ticket.status}</Tag>
-    //               </div> */}
-    //             </div>
-    //           </Card>
-    //         </List.Item>
-    //       )}
-    //     />
-    //   )}
-
-    //   <Modal
-    //     title="Mã QR Vé"
-    //     visible={isModalVisible}
-    //     onCancel={handleModalClose}
-    //     footer={null}
-    //   >
-    //     <div style={{ textAlign: "center" }}>
-    //       <QRCodeSVG value={currentQR} size={256} />
-    //       <p style={{ marginTop: "16px" }}>Mã vé: {currentQR}</p>
-    //     </div>
-    //   </Modal>
-    // </div>
   );
 };
 

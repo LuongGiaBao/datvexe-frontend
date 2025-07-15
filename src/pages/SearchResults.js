@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -14,13 +14,11 @@ import {
 import {
   EnvironmentOutlined,
   ArrowRightOutlined,
-  ClockCircleOutlined,
   CarOutlined,
   InfoCircleOutlined,
   DollarOutlined,
 } from "@ant-design/icons";
 import Banner from "../components/Banner";
-import { fetchAllPromotionDetails } from "../api/PromotionDetailApi";
 const { Title, Text } = Typography;
 
 const SearchResults = () => {
@@ -152,10 +150,7 @@ const SearchResults = () => {
                     </Space>
 
                     {/* Expected time */}
-                    <Space
-                      align="center"
-                      style={{ marginLeft: "29px"}}
-                    >
+                    <Space align="center" style={{ marginLeft: "29px" }}>
                       <Text type="secondary">
                         {/* Thời gian dự kiến:{" "} */}
                         {formatExpectedTime(schedule.expectedTime)}
